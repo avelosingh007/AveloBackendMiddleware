@@ -23,20 +23,19 @@ namespace AveloMiddleware
         [FunctionName("Avelo")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", "put", "delete", Route = "Avelo")] HttpRequest req,
-            ExecutionContext context, 
+            ExecutionContext context,
             ILogger log)
         {
             try
             {
-
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
                 var config = new ConfigurationBuilder()
                     .SetBasePath(context.FunctionAppDirectory)
-                    .AddJsonFile("local.settings.json")
+                    .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables()
                     .Build();
-                
+
                 var type = req.Query["type"];
 
                 if (!string.IsNullOrEmpty(type))
@@ -47,19 +46,18 @@ namespace AveloMiddleware
                     Dictionary<string, string> baseUrlPairs = new Dictionary<string, string>();
                     baseUrlPairs.Add("AUTH", config.GetValue<string>("AuthBaseUrl"));
                     baseUrlPairs.Add("CORE", config.GetValue<string>("CoreBaseUrl"));
-                    baseUrlPairs.Add("SLGT", config.GetValue<string>("SelligentBaseUrl"));
+                    baseUrlPairs.Add("SLGNT", config.GetValue<string>("SelligentBaseUrl"));
                     baseUrlPairs.Add("WP", config.GetValue<string>("WpBaseUrl"));
 
                     var result = await ApiCallingService.CallAPI(
-                        config.GetValue<string>("SubscriptionKey"),
                         req.Query["api_route"],
-                        new  HttpMethod(req.Method),
-                        type, 
+                        new HttpMethod(req.Method),
+                        type,
                         baseUrlPairs[type],
                         requestBody,
-                        config.GetValue<string>("WPApplicationPassword"));
+                        config);
                     return result;
-                
+
                 }
                 else
                 {
@@ -72,9 +70,30 @@ namespace AveloMiddleware
             }
         }
 
-        public class AppSettings
-        {
 
+        //This is not completed yet. This new fucntion is for handling all the authentication.
+        [FunctionName("AveloAuth")]
+        public static async Task<IActionResult> Auth(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", "put", "delete", Route = "Avelo/Auth")] HttpRequest req,
+            ExecutionContext context,
+            ILogger log)
+        {
+            try
+            {
+                log.LogInformation("C# HTTP trigger function processed a request.");
+
+                var config = new ConfigurationBuilder()
+                    .SetBasePath(context.FunctionAppDirectory)
+                    .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+                    .AddEnvironmentVariables()
+                    .Build();
+
+                return new OkObjectResult("Not completed yet");
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
         }
     }
 }

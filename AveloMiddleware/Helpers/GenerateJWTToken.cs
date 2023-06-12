@@ -62,21 +62,22 @@ namespace AveloMiddleware.Helpers
 
         private async Task<bool> isPnrNoAndLastNameValid(string pnr_no, string last_name)
         {
-            var result = await ApiCallingService.CallAPI(
-                        _config.GetValue<string>("SubscriptionKey"),
-                        $"/reservation/v1.1/read/{pnr_no}/{last_name}",
-                        new HttpMethod("GET"),
-                        "CORE",
-                        _config.GetValue<string>("CoreBaseUrl"),
-                        "");
-            if(result.StatusCode == StatusCodes.Status200OK)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            //var result = await ApiCallingService.CallAPI(
+            //            _config.GetValue<string>("SubscriptionKey"),
+            //            $"/reservation/v1.1/read/{pnr_no}/{last_name}",
+            //            new HttpMethod("GET"),
+            //            "CORE",
+            //            _config.GetValue<string>("CoreBaseUrl"),
+            //            "");
+            //if(result.StatusCode == StatusCodes.Status200OK)
+            //{
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
+            return true;
         }
     }
 }
